@@ -3,8 +3,6 @@ import { h, Component, cloneElement, toChildArray } from 'preact';
 import Flowpoint from './Flowpoint.js';
 import { getColor, AutoGetLoc } from './Helpers.js';
 
-import { cloneDeep } from 'lodash';
-
 
 // Component class
 export default class Flowspace extends Component {
@@ -77,11 +75,9 @@ export default class Flowspace extends Component {
 
     // Extracting connections and adding updateFlowspace to all children
     var newKeys = [];
-    // console.log(this.props);
     const childrenWithProps = toChildArray(this.props.children).map(child => {
 
       if (child.type === Flowpoint) {
-        // console.log('child is FlowPoint');   
         const outputs = child.props.outputs;
 
         // Outputs can be defined as array or object
@@ -91,13 +87,15 @@ export default class Flowspace extends Component {
             connections.push({
               a:child.key,
               b:out_key,
-              width: this.props.connectionSize || 4,
-              outputLoc: 'auto',
-              inputLoc: 'auto',
-              outputColor: theme_colors.p,
-              inputColor: this.props.noFade ? theme_colors.p : theme_colors.a,
-              dash: undefined,
-              onClick: null
+              width: output.width || this.props.connectionSize || 4,
+              outputLoc: output.output || 'auto',
+              inputLoc: output.input || 'auto',
+              outputColor: output.outputColor || theme_colors.p,
+              inputColor: output.inputColor || (this.props.noFade ? theme_colors.p : theme_colors.a),
+              arrowStart: output.arrowStart,
+              arrowEnd: output.arrowEnd,
+              dash: (output.dash !== undefined ? (output.dash > 0 ? output.dash : undefined) : undefined),
+              onClick: output.onClick ? (e) => {output.onClick(child.key, out_key, e)} : this.props.onLineClick ? (e) => {this.props.onLineClick(child.key, out_key, e)} : null
             });
           });
 
@@ -119,7 +117,6 @@ export default class Flowspace extends Component {
               onClick: output.onClick ? (e) => {output.onClick(child.key, out_key, e)} : this.props.onLineClick ? (e) => {this.props.onLineClick(child.key, out_key, e)} : null
             });
           });
-        // console.log('connections', connections);
         };
 
         // Adding to newKeys
@@ -135,7 +132,6 @@ export default class Flowspace extends Component {
           theme:(child.props.theme || (this.props.theme || 'indigo'))
         });
       };
-
     });
 
     // Removing unused positions
@@ -145,7 +141,6 @@ export default class Flowspace extends Component {
 
     // Drawing of connections will only start after Flowspace have been mounted once.
     if (this.didMount) {
-
       // Getting flowspace size
       Object.keys(this.state).map(key => {
         const point = this.state[key]
@@ -156,7 +151,6 @@ export default class Flowspace extends Component {
       // Looping through connections and adding paths and gradients.
       var newCons = [];
       connections.map(connection => {
-        //   console.log('connection', connection);
 
         // Loop specifics
         const pa = this.state[connection.a]
@@ -221,8 +215,6 @@ export default class Flowspace extends Component {
               markerEnd={markerEnd ? 'url(#arrow' + connection.inputColor + ')' : null}
               />
           )
-
-        //   console.log('paths', paths);
 
           // Calculating how x and y should affect gradient
           var p1 = {x:0, y:0}

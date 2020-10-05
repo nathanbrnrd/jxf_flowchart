@@ -64,7 +64,7 @@ export default class Flowpoint extends Component {
     this.onTouchEnd = this.onTouchEnd.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
 
-    console.log('porps children', this.props.children);
+    // console.log('porps children', this.props.children);
   }
 
 
@@ -87,7 +87,6 @@ export default class Flowpoint extends Component {
 
 
   componentDidUpdate(props, state) {
-
     // Telling flowspace about changes?
     if (this.doTellFlowspace) {
       this.tellFlowspace();
@@ -109,7 +108,6 @@ export default class Flowpoint extends Component {
 
 
   tellFlowspace() {
-
     // Telling parent flowspace about new positions and/or dimensions
     this.updateFlowspace(
       this.state.id,

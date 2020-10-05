@@ -1,76 +1,31 @@
-import { h, Component, createRef, useState } from 'preact';
-import dialog from './style.scss';
+import { h, Component, createContext } from 'preact';
 
 // Flowspace
 import Flowspace from '../api/Flowspace.js';
 import Flowpoint from '../api/Flowpoint.js';
 
-// Material UI
-import { AddCircleOutline, MoreHoriz } from '@material-ui/icons';
+import { AddFlowpointButton } from './create-button';
+import { FlowpointContent } from './flowpoint-content';
+import { FlowpointControlDialog } from './flowpoint-control-dialog';
+import { DUMMY_FLOWPOINTS } from '../fixtures/flowpoints';
 
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+export const FlowpointOptions = createContext();
 
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import Checkbox from '@material-ui/core/Checkbox';
-import ListItemText from '@material-ui/core/ListItemText';
+const OUTPUT_VALUE = {
+    "output": "auto",
+    "input": "auto",
+    "dash": 0
+};
+
 
 export default class App extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
-
             showCreateBox: false,
-            selected_point: null,
-
-            flowpoints: {
-                "0": {
-                    "msg": "point b",
-                    "pos": {
-                        "x": 300,
-                        "y": 150
-                    },
-                    "outputs": {
-                        "1": {
-                            "output": "auto",
-                            "input": "auto",
-                            "dash": 0
-                        }
-                    }
-                },
-                "1": {
-                    "msg": "point a",
-                    "pos": {
-                        "x": 300,
-                        "y": 250
-                    },
-                    "outputs": {
-                        "2": {
-                            "output": "auto",
-                            "input": "auto",
-                            "dash": 0
-                        }
-                    }
-                },
-                "2": {
-                    "msg": "point c",
-                    "pos": {
-                        "x": 480,
-                        "y": 140
-                    },
-                    "outputs": {}
-                }
-            }
+            selected: undefined,
+            flowpoints: DUMMY_FLOWPOINTS
         }
     }
 
@@ -82,30 +37,73 @@ export default class App extends Component {
         console.log('handle_touch');
     }
 
-    createNewItem(name) {
-        var newpoint = {
-            "3": {
-                "msg": name,
-                "pos": {
-                    "x": 100,
-                    "y": 100
-                },
-                "outputs": {
-                    "2": {
-                        "output": "auto",
-                        "input": "auto",
-                        "dash": 0
-                    }
-                }
+    openDialog = (selected) => this.setState({selected, showCreateBox: true});
+    closeDialog = () => this.setState({showCreateBox: false, selected: undefined}); // TODO: delay setState `selected` => appears undefined before closing Dialog
+    getOutputs = () => {
+        const availableFlowpoints = this.state.selected ?
+         this.state.flowpoints.filter(flowpoint => flowpoint.id !== this.state.selected.id) :
+         this.state.flowpoints;
+         return {
+             available: availableFlowpoints.map(flowpoint => ({id: flowpoint.id.toString(), name: flowpoint.name})),
+             selected: this.state.selected ? Object.keys(this.state.selected.outputs) : []
             }
-        }
-        var flowpoints = { ...this.state.flowpoints, ...newpoint }
-        this.setState({ flowpoints, showCreateBox: false }, () => console.log(this.state.flowpoints));
     }
 
-    render() {
+    deleteFlowpoint = () => {
+        const id = this.state.selected.id;
+        const remainingFlowPoints = this.state.flowpoints.filter(flowpoint => flowpoint.id !== id);
+        remainingFlowPoints.forEach(flowpoint => {
+            if (flowpoint.outputs && flowpoint.outputs[id.toString()]) {
+                delete flowpoint.outputs[id.toString()]
+            }
+        });
+        this.setState({flowpoints: remainingFlowPoints});
+        this.closeDialog();
+    }
+
+    createFlowPoint = (name, outputs = []) => {
+        const newId = Math.max(...this.state.flowpoints.map(flowpoint => flowpoint.id)) + 1;
+        const newFlowpoint = {
+            id: newId,
+            name: name,
+            outputs: {},
+            pos: {
+                "x": 100,
+                "y": 100
+            },
+        }
+        outputs.forEach(output => {
+            newFlowpoint.outputs[output] = OUTPUT_VALUE;
+        });
+        const flowpoints = [...this.state.flowpoints, ...newFlowpoint];
+        this.setState({ flowpoints, showCreateBox: false });
+        this.closeDialog();
+    }
+
+    updateFlowPoint = (name, outputs) => {
+        const selectedId = this.state.selected.id;
+        const selectedFlowpoint = this.state.flowpoints.find(flowpoint => flowpoint.id === selectedId);
+        selectedFlowpoint.name = name;
+        if (outputs) { // outputs undefined if not changed
+            selectedFlowpoint.outputs = {}; // Reset selected outputs
+            outputs.forEach(output => selectedFlowpoint.outputs[output] = OUTPUT_VALUE) // Rebuild all selected outputs
+        }
+        this.setState({flowpoints: this.state.flowpoints});
+        this.closeDialog();
+    }
+
+    render(_ , {showCreateBox, flowpoints, selected}) {
         return (
             <div>
+                <FlowpointOptions.Provider value={this.getOutputs()}>
+                    <FlowpointControlDialog
+                        isOpen={showCreateBox}
+                        selected={selected}
+                        createFlowPoint={this.createFlowPoint}
+                        updateFlowPoint={this.updateFlowPoint}
+                        deleteFlowpoint={this.deleteFlowpoint}
+                        closeDialog={this.closeDialog} />
+                </FlowpointOptions.Provider>
                 <Flowspace
                     theme="blue"
                     variant="outlined"
@@ -113,32 +111,22 @@ export default class App extends Component {
                     avoidCollisions
                     connectionSize={4}>
                     {
-                        Object.keys(this.state.flowpoints).map(key => {
-                            var point = this.state.flowpoints[key]
-
+                        flowpoints.map(flowpoint => {
                             return (
-
                                 <Flowpoint
-                                    key={key}
+                                    key={flowpoint.id.toString()}
                                     snap={{ x: 10, y: 10 }}
-                                    style={{ height: Math.max(50, Math.ceil(point.msg.length / 20) * 30) }}
-                                    startPosition={point.pos}
-                                    outputs={point.outputs}
-                                    onClick={e => { this.handleClick(key, e) }}
-                                    onTouch={e => { this.handleTouch(key) }}
+                                    style={{ height: Math.max(50, Math.ceil(flowpoint.name.length / 20) * 30) }}
+                                    startPosition={flowpoint.pos}
+                                    outputs={flowpoint.outputs}
+                                    onClick={e => { this.handleClick(flowpoint.id, e) }}
+                                    onTouch={e => { this.handleTouch(flowpoint.id) }}
                                     onDrag={pos => {
                                         var points = this.state.points;
-                                        this.state.flowpoints[key].pos = pos;
+                                        flowpoint.pos = pos;
                                         this.setState({ points, lastPos: pos })
                                     }}>
-                                    <div style={{ display: 'table', width: '100%', height: '100%', position: 'relative' }}>
-                                        <div style={{ display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', paddingLeft: 2, paddingRight: 2 }}>
-                                            {
-                                                point.msg !== '' ? point.msg : 'Empty'
-                                            }
-                                        </div>
-                                        <MoreHoriz onClick={() => this.setState({ showCreateBox: true })} style={{ position: 'absolute', top: 0, right: 0 }} />
-                                    </div>
+                                    <FlowpointContent openDialog={() => this.openDialog(flowpoint)} name={flowpoint.name} />
                                 </Flowpoint>
 
                             )
@@ -147,55 +135,7 @@ export default class App extends Component {
                     }
                 </Flowspace>
 
-                <Dialog open={this.state.showCreateBox}>
-                    <DialogTitle id="form-dialog-title">New item</DialogTitle>
-                    <DialogContent>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="name"
-                            label="name"
-                            type="text"
-                            fullWidth
-                        />
-                        <FormControl>
-                            <InputLabel id="demo-mutiple-checkbox-label">Link to</InputLabel>
-                            <Select
-                                labelId="demo-mutiple-checkbox-label"
-                                id="demo-mutiple-checkbox"
-                                multiple
-                                value={[this.state.personName]}
-                                renderValue={(selected) => selected.join(', ')}
-                            >
-                                {Object.keys(this.state.flowpoints).map((name) => (
-                                    <MenuItem key={name} value={name}>
-                                        <Checkbox checked={(this.state.personName || []).indexOf(name) > -1} />
-                                        <ListItemText primary={name} />
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => this.setState({ 'showCreateBox': false })} color="primary">
-                            Cancel
-                            </Button>
-                        <Button color="primary" onClick={() => this.createNewItem()}>
-                            Subscribe
-                              </Button>
-                    </DialogActions>
-                </Dialog>
-
-
-                <div style={{ position: 'fixed', bottom: 0, right: 0, padding: 3 }}>
-                    <div style={{ paddingBottom: 3 }}>
-                        <div
-                            style={{ background: 'light-blue', color: '#000000', zIndex: 6, boxShadow: 'none' }}
-                            onClick={() => this.setState({ 'showCreateBox': true })}>
-                            <AddCircleOutline color="primary" />
-                        </div>
-                    </div>
-                </div>
+                <AddFlowpointButton openDialog={() => this.openDialog()} />
             </div>
         )
     }
