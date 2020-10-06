@@ -85,7 +85,7 @@ export default class Flowspace extends Component {
 
           outputs.forEach(out_key => {
             connections.push({
-              a:child.key,
+                       a:child.key,
               b:out_key,
               width: output.width || this.props.connectionSize || 4,
               outputLoc: output.output || 'auto',
@@ -144,8 +144,8 @@ export default class Flowspace extends Component {
       // Getting flowspace size
       Object.keys(this.state).map(key => {
         const point = this.state[key]
-        maxX = Math.max(maxX, point.x + 4 * point.width)
-        maxY = Math.max(maxY, point.y + 4 * point.height)
+        maxX = Math.max(maxX, point.x + 1.5 * point.width)
+        maxY = Math.max(maxY, point.y + 2 * point.height)
       })
 
       // Looping through connections and adding paths and gradients.
@@ -256,6 +256,8 @@ export default class Flowspace extends Component {
     // Adding scroll (settings for overflow will be overwritten if defined by user)
     var style = {
       overflow:'scroll',
+      height: '100%',
+      paddingTop: '63px',
       backgroundColor: background_color.p
     };
     if (this.props.style) {

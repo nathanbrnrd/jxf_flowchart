@@ -1,3 +1,33 @@
 .dialog {
     background-color: transparent!important;
 }
+
+.jxf_container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.jxf_top {
+    flex-grow: 1;
+    position: relative;
+}
+
+.jxf_actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    > div:first-child {
+        display: flex;
+    }
+}
+
+.jxf_bottom {
+    flex-shrink: 0;
+    flex-grow: 0;
+}

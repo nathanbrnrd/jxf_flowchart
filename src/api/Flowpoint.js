@@ -126,7 +126,6 @@ export default class Flowpoint extends Component {
 
 
   onTouchStart(e) {
-
     // No dragging?
     if (e.target.className.includes('nodrag')) return
 
