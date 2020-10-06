@@ -15,18 +15,21 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
+import Chip from '@material-ui/core/Chip';
 
 export function OutputsSelect(props) {
 
     const outputs = useContext(FlowpointOptions);
     // Selected output ids controllers
     const [selectedOutputIds, selectOutputIds] = useState(outputs.selected);
-    const onOutputIdsChange = (e) => selectOutputIds(e.target.value.map(value => value.id));
-
+    const onOutputIdsChange = (id, alreadySelected) => {
+        const newSelectedIds = alreadySelected ?
+            selectedOutputIds.filter(selId => selId !== id) :
+            [...selectedOutputIds, id]
+        selectOutputIds(newSelectedIds);
+    }
     const options = orderBy(outputs.available, ['name']);
     const isOptionChecked = (optionId) => selectedOutputIds.includes(optionId);
-    const getSelectedOptions = () => options.filter(option => selectedOutputIds.includes(option.id));
-
     // Sync state to prop on later rendering
     useEffect(() => {
         selectOutputIds(selectedOutputIds);
@@ -37,24 +40,18 @@ export function OutputsSelect(props) {
     }, [selectedOutputIds])
 
     return (
-        <FormControl>
-            <InputLabel id="demo-mutiple-checkbox-label">Link to</InputLabel>
-            <Select
-                labelId="demo-mutiple-checkbox-label"
-                id="demo-mutiple-checkbox"
-                multiple
-                input={<Input fullWidth />}
-                value={getSelectedOptions()}
-                onChange={() => onOutputIdsChange(event)}
-                renderValue={(selected) => selected.map(sel => sel.name).join(', ')}
-            >
-                {options.map((option) => (
-                    <MenuItem key={option.id} value={option}>
-                        <Checkbox checked={isOptionChecked(option.id)} />
-                        <ListItemText primary={option.name} />
-                    </MenuItem>
-                ))}
-            </Select>
-        </FormControl>
-    );
+        <div>
+            <p>Link to</p>
+            {options.map(option => {
+                const isSelected = isOptionChecked(option.id);
+                return (
+                <Chip label={option.name}
+                    key={option.id}
+                    size="small"
+                    color={isSelected ? 'primary' : 'default'}
+                    onClick={() => onOutputIdsChange(option.id, isSelected)} />
+            );
+                })}
+        </div>
+    )
 }
