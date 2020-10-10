@@ -82,7 +82,7 @@ export default class Flowspace extends Component {
 
         // Outputs can be defined as array or object
         if (outputs instanceof Array) {
-
+          // TODO: transform Outputs to array and transform id to number instead of string
           outputs.forEach(out_key => {
             connections.push({
                        a:child.key,

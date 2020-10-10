@@ -13,13 +13,23 @@ import { FlowpointControlDialog } from './flowpoint-control-dialog';
 import { DUMMY_FLOWPOINTS } from '../fixtures/flowpoints';
 
 // Material-UI
-import { Redo, Undo, Clear } from '@material-ui/icons';
+import { Redo, Undo, Clear, Settings } from '@material-ui/icons';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Drawer from '@material-ui/core/Drawer';
+
+import { makeStyles } from '@material-ui/core/styles';
 
 export const FlowpointOptions = createContext();
 export const FlowpointComment = createContext();
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    overflowY: 'visible',
+    visibility: 'visible!important'
+  }
+}));
 
 const OUTPUT_VALUE = {
     "output": "auto",
@@ -34,22 +44,38 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            drawerOpen: true,
             showCreateBox: false,
             selected: undefined,
             flowpoints: cloneDeep(DUMMY_FLOWPOINTS),
             globalComment: 'This is  comment',
             history: [cloneDeep(DUMMY_FLOWPOINTS)],
-            historyPosition: 0
+            historyPosition: 0,
+            selectedBottom: undefined
         }
     }
 
-    handleClick() {
-        console.log('handle_key');
-    }
+    classes = useStyles();
 
+    handleClick = (id) => this.setState({selectedBottom: this.state.flowpoints.find(flowpoint => flowpoint.id === id)})
     handleTouch() {
+        // TODO: same as handleClick
         console.log('handle_touch');
     }
+
+    updateBottom = (value) => {
+        console.log('changed');
+        if (this.state.selectedBottom) {
+            const id = this.state.selectedBottom.id;
+            const selectedBottom = {...this.state.selectedBottom, comment: value};
+            const flowpointIndex = this.state.flowpoints.findIndex(flowpoint => flowpoint.id === id);
+            const flowpoints = this.state.flowpoints;
+            flowpoints[flowpointIndex] = selectedBottom;
+            this.setState({ selectedBottom, flowpoints});
+        } else {
+            this.setState({ globalComment: value });
+        }
+    } 
 
     undoChanges = () => {
         const newHistoryPosition = this.state.historyPosition - 1;
@@ -89,10 +115,9 @@ export default class App extends Component {
         this.closeDialog();
     }
 
-    updateHistory() {
+    updateHistory() { // TODO: try to add all state in history
         const newHistory = this.state.history.filter((_, i) => i <= this.state.historyPosition);
-        this.setState({history: [...newHistory, cloneDeep(this.state.flowpoints)], historyPosition: this.state.historyPosition + 1},
-            () => console.log(this.state.history));
+        this.setState({history: [...newHistory, cloneDeep(this.state.flowpoints)], historyPosition: this.state.historyPosition + 1});
     }
 
     createFlowPoint = (name, outputs = [], comment) => {
@@ -128,7 +153,7 @@ export default class App extends Component {
         this.closeDialog();
     }
 
-    render(_ , {showCreateBox, flowpoints, selected, globalComment, history, historyPosition}) {
+    render(_ , {showCreateBox, flowpoints, selected, globalComment, history, historyPosition, drawerOpen, selectedBottom}) {
         return (
             <div class="jxf_container">
                 <FlowpointOptions.Provider value={this.getOutputs()}>
@@ -148,20 +173,23 @@ export default class App extends Component {
                         variant="outlined"
                         background="black"
                         avoidCollisions
-                        connectionSize={2}>
+                        connectionSize={2}
+                        onClick={() => this.setState({selectedBottom: undefined})}>
                         {
                             flowpoints.map(flowpoint => {
                                 return (
                                     /* TODO: harmonize style */
                                     <Flowpoint
-                                        key={flowpoint.id.toString()}
+                                        key={flowpoint.id.toString()} // key needs to be a string
                                         snap={{ x: 10, y: 10 }}
                                         style={{ height: Math.max(50, Math.ceil(flowpoint.name.length / 20) * 30), background: 'rgba(0,0,0,0.8)' }}
                                         startPosition={flowpoint.pos}
                                         outputs={flowpoint.outputs}
-                                        onClick={e => { this.handleClick(flowpoint.id, e) }}
+                                        onClick={ (id) => this.handleClick(Number(id))}
                                         onTouch={e => { this.handleTouch(flowpoint.id) }}
+                                        onDragEnd={() => console.log('should save in history')}
                                         onDrag={pos => {
+                                            // TODO: not necessary
                                             var points = this.state.points;
                                             flowpoint.pos = pos;
                                             this.setState({ points, lastPos: pos })
@@ -193,22 +221,37 @@ export default class App extends Component {
                             </Fab>
                             <AddFlowpointButton openDialog={() => this.openDialog()} />
                         </div>
-                        <Button variant="contained">Save</Button>
+                        <div>
+                            <Fab color="primary" aria-label="add" size="small">
+                                <Settings />
+                            </Fab>
+                            <Button variant="contained">Save</Button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="jxf_bottom">
+ 
+                <Drawer
+                    classes={{paper: this.classes.paper}}
+                    variant="persistent"
+                    anchor="bottom"
+                    open={drawerOpen}
+                >
+                    <div style={{color: 'white', margin: 0, position: 'absolute', width: '100%', top: '-20px'}}>
+                        <span onClick={() => this.setState({drawerOpen: !drawerOpen, selectedBottom: undefined})}>Notes</span>
+                    {drawerOpen && <span> for {selectedBottom ? selectedBottom.name : 'global'}</span>}
+                    </div>
                     <TextField
                         id="outlined-textarea"
                         placeholder="Note"
                         multiline
                         fullWidth
-                        value={globalComment}
+                        value={selectedBottom ? selectedBottom.comment || '' : globalComment}
                         variant="outlined"
                         rows={3}
-                        onInput={(e) => this.setState({globalComment: e.target.value})}
+                        onChange={(e) => this.updateBottom(e.target.value)}
                     />
-                </div>
+                </Drawer>
             </div>
         )
     }

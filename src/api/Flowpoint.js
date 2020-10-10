@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 
 import { CalcPos, getColor } from './Helpers.js';
+import { TramOutlined } from '@material-ui/icons';
 
 
 // Component class
@@ -127,6 +128,7 @@ export default class Flowpoint extends Component {
 
   onTouchStart(e) {
     // No dragging?
+    if (typeof e.target.className === 'object') return // Hack to detect click on svg dialog opener
     if (e.target.className.includes('nodrag')) return
 
     // Resetting drag
@@ -190,7 +192,7 @@ export default class Flowpoint extends Component {
     this.tellFlowspace()
 
     // Final routines
-    e.preventDefault()
+    // e.preventDefault() // Fix Chrome Error: unable to preventDefault on passive event
     e.stopPropagation()
 
   }
@@ -240,7 +242,7 @@ export default class Flowpoint extends Component {
   onMouseUp(e) {
 
     // Trigger user-defined onClick?
-    if (!this.didDrag) this.onClick(e)
+    if (!this.didDrag) this.onClick(this.props.id)
 
     // Resetting drag
     this.setState({drag: false})
