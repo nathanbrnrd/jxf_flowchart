@@ -3,6 +3,8 @@ import { h, Component, cloneElement, toChildArray } from 'preact';
 import Flowpoint from './Flowpoint.js';
 import { getColor, AutoGetLoc } from './Helpers.js';
 
+import { cloneDeep } from 'lodash';
+
 
 // Component class
 export default class Flowspace extends Component {
@@ -33,7 +35,6 @@ export default class Flowspace extends Component {
 
 
   handleFlowspaceClick(e) {
-
     // Testing click if this.props.onClick is defined
     if (this.props.onClick) {
 
@@ -76,48 +77,25 @@ export default class Flowspace extends Component {
     // Extracting connections and adding updateFlowspace to all children
     var newKeys = [];
     const childrenWithProps = toChildArray(this.props.children).map(child => {
-
       if (child.type === Flowpoint) {
         const outputs = child.props.outputs;
 
         // Outputs can be defined as array or object
-        if (outputs instanceof Array) {
-          // TODO: transform Outputs to array and transform id to number instead of string
-          outputs.forEach(out_key => {
-            connections.push({
-                       a:child.key,
-              b:out_key,
-              width: output.width || this.props.connectionSize || 4,
-              outputLoc: output.output || 'auto',
-              inputLoc: output.input || 'auto',
-              outputColor: output.outputColor || theme_colors.p,
-              inputColor: output.inputColor || (this.props.noFade ? theme_colors.p : theme_colors.a),
-              arrowStart: output.arrowStart,
-              arrowEnd: output.arrowEnd,
-              dash: (output.dash !== undefined ? (output.dash > 0 ? output.dash : undefined) : undefined),
-              onClick: output.onClick ? (e) => {output.onClick(child.key, out_key, e)} : this.props.onLineClick ? (e) => {this.props.onLineClick(child.key, out_key, e)} : null
-            });
+        outputs.forEach(output => {
+          connections.push({
+            a:child.key,
+            b:output.linkedTo,
+            width: output.width || this.props.connectionSize || 4,
+            outputLoc: output.output || 'auto',
+            inputLoc: output.input || 'auto',
+            outputColor: output.outputColor || theme_colors.p,
+            inputColor: output.inputColor || (this.props.noFade ? theme_colors.p : theme_colors.a),
+            arrowStart: output.arrowStart,
+            arrowEnd: output.arrowEnd,
+            dash: (output.dash !== undefined ? (output.dash > 0 ? output.dash : undefined) : undefined),
+            onClick: output.onClick ? (e) => {output.onClick(child.key, output.linkedTo, e)} : this.props.onLineClick ? (e) => {this.props.onLineClick(child.key, output.linkedTo, e)} : null
           });
-
-        } else if (outputs instanceof Object) {
-
-          Object.keys(outputs).map(out_key => {
-            const output = outputs[out_key];
-            connections.push({
-              a:child.key,
-              b:out_key,
-              width: output.width || this.props.connectionSize || 4,
-              outputLoc: output.output || 'auto',
-              inputLoc: output.input || 'auto',
-              outputColor: output.outputColor || theme_colors.p,
-              inputColor: output.inputColor || (this.props.noFade ? theme_colors.p : theme_colors.a),
-              arrowStart: output.arrowStart,
-              arrowEnd: output.arrowEnd,
-              dash: (output.dash !== undefined ? (output.dash > 0 ? output.dash : undefined) : undefined),
-              onClick: output.onClick ? (e) => {output.onClick(child.key, out_key, e)} : this.props.onLineClick ? (e) => {this.props.onLineClick(child.key, out_key, e)} : null
-            });
-          });
-        };
+        });
 
         // Adding to newKeys
         newKeys.push(child.key);
@@ -135,7 +113,7 @@ export default class Flowspace extends Component {
     });
 
     // Removing unused positions
-    Object.keys(this.state).map(testkey => {
+    Object.keys(this.state).map(Number).map(testkey => {
       if (!newKeys.includes(testkey)) delete this.state[testkey];
     });
 
@@ -143,15 +121,14 @@ export default class Flowspace extends Component {
     if (this.didMount) {
       // Getting flowspace size
       Object.keys(this.state).map(key => {
-        const point = this.state[key]
+        const point = this.state[Number(key)]
         maxX = Math.max(maxX, point.x + 1.5 * point.width)
         maxY = Math.max(maxY, point.y + 2 * point.height)
       })
 
       // Looping through connections and adding paths and gradients.
       var newCons = [];
-      connections.map(connection => {
-
+      connections.forEach(connection => {
         // Loop specifics
         const pa = this.state[connection.a]
         const pb = this.state[connection.b]
@@ -164,7 +141,6 @@ export default class Flowspace extends Component {
 
         // Continuing only if both pa and pb are defined
         if (pa && pb) {
-
           // Calculate new positions or get old ones
           var positions = AutoGetLoc(pa, pb, connection.outputLoc, connection.inputLoc, connection.a, connection.b, this.state, (this.props.avoidCollisions === false ? false : true));
 

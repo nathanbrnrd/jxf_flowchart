@@ -64,8 +64,6 @@ export default class Flowpoint extends Component {
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
-
-    // console.log('porps children', this.props.children);
   }
 
 

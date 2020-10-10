@@ -7,14 +7,15 @@ export const DUMMY_FLOWPOINTS = [
             "x": 300,
             "y": 150
         },
-        outputs: {
-            "1": {
+        outputs: [
+            {
+                linkedTo: 1,
                 "output": "auto",
                 "input": "auto",
                 "dash": 0,
                 "arrowEnd": true
             }
-        }
+        ]
     },
     {
         id: 1,
@@ -23,14 +24,15 @@ export const DUMMY_FLOWPOINTS = [
             "x": 300,
             "y": 250
         },
-        outputs: {
-            "2": {
+        outputs: [
+            {
+                linkedTo: 2,
                 "output": "auto",
                 "input": "auto",
                 "dash": 0,
                 "arrowEnd": true
             }
-        }
+        ]
     },
     {
         id: 2,
@@ -39,6 +41,6 @@ export const DUMMY_FLOWPOINTS = [
             "x": 480,
             "y": 140
         },
-        outputs: {}
+        outputs: []
     }
 ];

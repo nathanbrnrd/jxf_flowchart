@@ -64,7 +64,6 @@ export default class App extends Component {
     }
 
     updateBottom = (value) => {
-        console.log('changed');
         if (this.state.selectedBottom) {
             const id = this.state.selectedBottom.id;
             const selectedBottom = {...this.state.selectedBottom, comment: value};
@@ -98,8 +97,8 @@ export default class App extends Component {
          this.state.flowpoints.filter(flowpoint => flowpoint.id !== this.state.selected.id) :
          this.state.flowpoints;
          return {
-             available: availableFlowpoints.map(flowpoint => ({id: flowpoint.id.toString(), name: flowpoint.name})),
-             selected: this.state.selected ? Object.keys(this.state.selected.outputs) : []
+             available: availableFlowpoints.map(flowpoint => ({id: flowpoint.id, name: flowpoint.name})),
+             selected: this.state.selected ? this.state.selected.outputs.map(output => output.linkedTo) : []
             }
     }
 
@@ -126,15 +125,12 @@ export default class App extends Component {
             id: newId,
             name: name,
             comment,
-            outputs: {},
+            outputs: outputs.map(output => ({linkedTo: output, ...OUTPUT_VALUE})),
             pos: {
                 "x": 15,
                 "y": 0
             },
         }
-        outputs.forEach(output => {
-            newFlowpoint.outputs[output] = OUTPUT_VALUE;
-        });
         const flowpoints = [...this.state.flowpoints, ...newFlowpoint];
         this.setState({ flowpoints, showCreateBox: false }, () => this.updateHistory());
         this.closeDialog();
@@ -146,8 +142,7 @@ export default class App extends Component {
         selectedFlowpoint.name = name;
         selectedFlowpoint.comment = comment;
         if (outputs) { // outputs undefined if not changed
-            selectedFlowpoint.outputs = {}; // Reset selected outputs
-            outputs.forEach(output => selectedFlowpoint.outputs[output] = OUTPUT_VALUE) // Rebuild all selected outputs
+            selectedFlowpoint.outputs = outputs.map(output => ({linkedTo: output, ...OUTPUT_VALUE}));
         }
         this.setState({flowpoints: this.state.flowpoints}, () => this.updateHistory());
         this.closeDialog();
@@ -180,7 +175,7 @@ export default class App extends Component {
                                 return (
                                     /* TODO: harmonize style */
                                     <Flowpoint
-                                        key={flowpoint.id.toString()} // key needs to be a string
+                                        key={flowpoint.id}
                                         snap={{ x: 10, y: 10 }}
                                         style={{ height: Math.max(50, Math.ceil(flowpoint.name.length / 20) * 30), background: 'rgba(0,0,0,0.8)' }}
                                         startPosition={flowpoint.pos}

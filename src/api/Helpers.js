@@ -88,7 +88,7 @@ export function CalcPos(pos, snap, minimum) {
     }
   
     // Testing all positions
-    Object.keys(allPositions).map(key => {
+    Object.keys(allPositions).map(Number).map(key => {
       if (key !== key1 && key !== key2) {
         if (!docrash) {
   
