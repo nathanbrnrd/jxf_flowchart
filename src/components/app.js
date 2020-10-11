@@ -1,4 +1,4 @@
-import { h, Component, createContext } from 'preact';
+import { h, Component, createContext, componentDidMount } from 'preact';
 import './style.scss';
 
 import { cloneDeep } from 'lodash';
@@ -16,12 +16,13 @@ import { DUMMY_FLOWPOINTS } from '../fixtures/flowpoints';
 import { Redo, Undo, Clear, Settings, Save, LockOutlined, LockOpenOutlined, Comment, Build, PlayCircleFilled } from '@material-ui/icons';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 
 import { makeStyles } from '@material-ui/core/styles';
+
+import { MapInteractionCSS } from 'react-map-interaction';
 
 export const FlowpointOptions = createContext();
 export const FlowpointComment = createContext();
@@ -183,6 +184,11 @@ export default class App extends Component {
                         </FlowpointComment.Provider>
                 </FlowpointOptions.Provider>
                 <div class="jxf_top">
+                <MapInteractionCSS defaultScale={2}
+                onClick={() => this.handleClick(undefined)}
+          defaultTranslation={{ x: 100, y: 100 }}
+          minScale={0.5}
+          maxScale={2}>
                     <Flowspace
                         theme="blue"
                         variant="outlined"
@@ -193,7 +199,6 @@ export default class App extends Component {
                         {
                             flowpoints.map(flowpoint => {
                                 return (
-                                    /* TODO: harmonize style */
                                     <Flowpoint
                                         key={flowpoint.id}
                                         snap={{ x: 10, y: 10 }}
@@ -201,6 +206,7 @@ export default class App extends Component {
                                         startPosition={flowpoint.pos}
                                         outputs={flowpoint.outputs}
                                         isLocked={isLocked}
+                                        selected={selectedBottom && selectedBottom.id === flowpoint.id}
                                         onClick={ (id) => this.handleClick(id)}
                                         onTouch={(id) => this.handleClick(id)}
                                         onDragEnd={() => console.log('should save in history')}
@@ -218,6 +224,9 @@ export default class App extends Component {
                             })
                         }
                     </Flowspace>
+
+                
+                    </MapInteractionCSS>
                 </div>
 
  
