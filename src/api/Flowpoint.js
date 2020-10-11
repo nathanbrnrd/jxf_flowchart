@@ -19,9 +19,8 @@ export default class Flowpoint extends Component {
       // Snap to grid
       snap: (props.snap === undefined) ? {x:1, y:1} : props.snap,
 
-      // Enable drag along axes
-      dragX: (props.dragX === undefined) ? true : props.dragX,
-      dragY: (props.dragY === undefined) ? true : props.dragY,
+      // Enable drag
+      isLocked: props.isLocked === undefined ? true : props.isLocked,
 
       // Position limits
       minX: (props.minX === undefined) ? 0 : props.minX,
@@ -73,7 +72,7 @@ export default class Flowpoint extends Component {
 
 
   componentWillReceiveProps(props) {
-    const testkeys = ['width', 'height']
+    const testkeys = ['width', 'height', 'isLocked']
     testkeys.map(propkey => {
       if (propkey in props) {
         if (props[propkey] !== this.state[propkey]) {
@@ -178,8 +177,8 @@ export default class Flowpoint extends Component {
 
     // Calculating new position
     var pos = {
-      x: this.state.dragX ? CalcPos(e.touches[0].pageX - this.state.rel.x, this.state.snap.x, this.state.minX) : this.state.pos.x,
-      y: this.state.dragY ? CalcPos(e.touches[0].pageY - this.state.rel.y, this.state.snap.y, this.state.minY) : this.state.pos.y
+      x: CalcPos(e.touches[0].pageX - this.state.rel.x, this.state.snap.x, this.state.minX),
+      y: CalcPos(e.touches[0].pageY - this.state.rel.y, this.state.snap.y, this.state.minY)
     };
     this.setState({pos})
 
@@ -214,6 +213,8 @@ export default class Flowpoint extends Component {
 
   onMouseDown(e) {
 
+    // If locked return
+    if (this.state.isLocked) return;
     // Wrong button or nodrag will cancel click and drag events
     if (e.button !== 0) return
     if (e.target.className.length && e.target.className.includes('nodrag')) return
@@ -256,18 +257,18 @@ export default class Flowpoint extends Component {
 
 
   onMouseMove(e) {
-
     // No dragging?
     if (!this.state.drag) return
 
     // Flowpoint was moved
     this.didDrag = true;
 
-    // Calculating new position
+   // Calculating new position 
+   // Original got draX and dragY options
     var pos = {
-      x: this.state.dragX ? CalcPos(e.pageX - this.state.rel.x, this.state.snap.x, this.state.minX) : this.state.pos.x,
-      y: this.state.dragY ? CalcPos(e.pageY - this.state.rel.y, this.state.snap.y, this.state.minY) : this.state.pos.y
-    }
+      x: CalcPos(e.pageX - this.state.rel.x, this.state.snap.x, this.state.minX),
+      y: CalcPos(e.pageY - this.state.rel.y, this.state.snap.y, this.state.minY)
+    };
     this.setState({pos})
 
     // Passing to user-defined event handler

@@ -7,6 +7,6 @@ export function FlowpointContent (props) {
         <div style={{ display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', paddingLeft: 2, paddingRight: 2 }}>
             { props.name || 'No name should not happen' }
         </div>
-        <MoreHoriz onClick={props.openDialog} style={{ position: 'absolute', top: 0, right: 0 }} />
+        { !props.isLocked && <MoreHoriz onClick={props.openDialog} style={{ position: 'absolute', top: 0, right: 0 }} /> }
     </div>;
 }

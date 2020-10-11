@@ -13,7 +13,7 @@ import { FlowpointControlDialog } from './flowpoint-control-dialog';
 import { DUMMY_FLOWPOINTS } from '../fixtures/flowpoints';
 
 // Material-UI
-import { Redo, Undo, Clear, Settings, Save } from '@material-ui/icons';
+import { Redo, Undo, Clear, Settings, Save, LockOutlined, LockOpenOutlined } from '@material-ui/icons';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -51,7 +51,8 @@ export default class App extends Component {
             globalComment: 'This is  comment',
             history: [cloneDeep(DUMMY_FLOWPOINTS)],
             historyPosition: 0,
-            selectedBottom: undefined
+            selectedBottom: undefined,
+            isLocked: false
         }
     }
 
@@ -146,7 +147,7 @@ export default class App extends Component {
         this.closeDialog();
     }
 
-    render(_ , {showCreateBox, flowpoints, selected, globalComment, history, historyPosition, drawerOpen, selectedBottom}) {
+    render(_ , {showCreateBox, flowpoints, selected, globalComment, history, historyPosition, drawerOpen, selectedBottom, isLocked}) {
         return (
             <div class="jxf_container">
                 <FlowpointOptions.Provider value={this.getOutputs()}>
@@ -178,6 +179,7 @@ export default class App extends Component {
                                         style={{ height: Math.max(50, Math.ceil(flowpoint.name.length / 20) * 30), background: 'rgba(0,0,0,0.8)' }}
                                         startPosition={flowpoint.pos}
                                         outputs={flowpoint.outputs}
+                                        isLocked={isLocked}
                                         onClick={ (id) => this.handleClick(Number(id))}
                                         onTouch={e => { this.handleTouch(flowpoint.id) }}
                                         onDragEnd={() => console.log('should save in history')}
@@ -187,7 +189,7 @@ export default class App extends Component {
                                             flowpoint.pos = pos;
                                             this.setState({ points, lastPos: pos })
                                         }}>
-                                        <FlowpointContent openDialog={() => this.openDialog(flowpoint)} name={flowpoint.name} />
+                                        <FlowpointContent openDialog={() => this.openDialog(flowpoint)} name={flowpoint.name} isLocked={isLocked}/>
                                     </Flowpoint>
 
                                 )
@@ -221,6 +223,9 @@ export default class App extends Component {
                             <Fab color="default" aria-label="add" size="small">
                                 <Save />
                             </Fab>
+                            <Fab color="default" aria-label="add" size="small" onClick={() => this.setState({isLocked: !isLocked})}>
+                                { isLocked ? <LockOutlined /> : <LockOpenOutlined /> }
+                            </Fab>
                         </div>
                     </div>
                 </div>
@@ -241,6 +246,7 @@ export default class App extends Component {
                         placeholder="Note"
                         multiline
                         fullWidth
+                        disabled={isLocked}
                         value={selectedBottom ? selectedBottom.comment || '' : globalComment}
                         variant="outlined"
                         rows={3}
