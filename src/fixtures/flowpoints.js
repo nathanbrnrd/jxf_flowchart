@@ -4,8 +4,8 @@ export const DUMMY_FLOWPOINTS = [
         name: "point b",
         comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis nibh vel dui lobortis consectetur nec quis quam. Praesent vitae eros augue. Aenean pharetra commodo nunc, quis bibendum mauris molestie id. Praesent porttitor nec risus ut ornare. Phasellus consectetur, elit id rhoncus efficitur, ipsum mauris sagittis massa, eu sagittis ipsum.",
         pos: {
-            "x": 300,
-            "y": 150
+            "x": 50,
+            "y": 50
         },
         outputs: [
             {
@@ -21,8 +21,8 @@ export const DUMMY_FLOWPOINTS = [
         id: 1,
         name: "point a",
         pos: {
-            "x": 300,
-            "y": 250
+            "x": 50,
+            "y": 150
         },
         outputs: [
             {
@@ -38,8 +38,8 @@ export const DUMMY_FLOWPOINTS = [
         id: 2,
         name: "point c",
         pos: {
-            "x": 480,
-            "y": 140
+            "x": 230,
+            "y": 40
         },
         outputs: []
     }

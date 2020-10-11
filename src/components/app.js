@@ -13,21 +13,36 @@ import { FlowpointControlDialog } from './flowpoint-control-dialog';
 import { DUMMY_FLOWPOINTS } from '../fixtures/flowpoints';
 
 // Material-UI
-import { Redo, Undo, Clear, Settings, Save, LockOutlined, LockOpenOutlined } from '@material-ui/icons';
+import { Redo, Undo, Clear, Settings, Save, LockOutlined, LockOpenOutlined, Comment, Build, PlayCircleFilled } from '@material-ui/icons';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
 
 import { makeStyles } from '@material-ui/core/styles';
 
 export const FlowpointOptions = createContext();
 export const FlowpointComment = createContext();
 
+const BOTTOM_NAVS = [
+    { value: 'settings', label: 'Page', icon: <Settings />},
+    { value: 'flow', label: 'Flow', icon: <Build />},
+    { value: 'note', label: 'Notes', icon: <Comment />},
+    { value: 'video', label: 'Videos', icon: <PlayCircleFilled />},
+    { value: 'save', label: 'Save', showLabel: true, icon: <Save />},
+    { value: 'lock', label: 'Lock', showLabel: true, icon: <LockOutlined />} // TODO: retrieve state to build this one
+];
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     overflowY: 'visible',
-    visibility: 'visible!important'
+    visibility: 'visible!important',
+    bottom: '56px'
+  },
+  root: {
+      minWidth: '45px'
   }
 }));
 
@@ -44,7 +59,6 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            drawerOpen: true,
             showCreateBox: false,
             selected: undefined,
             flowpoints: cloneDeep(DUMMY_FLOWPOINTS),
@@ -52,7 +66,8 @@ export default class App extends Component {
             history: [cloneDeep(DUMMY_FLOWPOINTS)],
             historyPosition: 0,
             selectedBottom: undefined,
-            isLocked: false
+            isLocked: false,
+            drawerView: undefined
         }
     }
 
@@ -62,6 +77,12 @@ export default class App extends Component {
     handleTouch() {
         // TODO: same as handleClick
         console.log('handle_touch');
+    }
+
+    bottomActionChanged(value) {
+        const noActionValue = ['lock', 'save', this.state.drawerView];
+        const drawerView = !noActionValue.includes(value) ? value : undefined;
+        this.setState({drawerView});
     }
 
     updateBottom = (value) => {
@@ -147,7 +168,7 @@ export default class App extends Component {
         this.closeDialog();
     }
 
-    render(_ , {showCreateBox, flowpoints, selected, globalComment, history, historyPosition, drawerOpen, selectedBottom, isLocked}) {
+    render(_ , {showCreateBox, flowpoints, selected, globalComment, history, historyPosition, selectedBottom, isLocked, drawerView}) {
         return (
             <div class="jxf_container">
                 <FlowpointOptions.Provider value={this.getOutputs()}>
@@ -180,8 +201,8 @@ export default class App extends Component {
                                         startPosition={flowpoint.pos}
                                         outputs={flowpoint.outputs}
                                         isLocked={isLocked}
-                                        onClick={ (id) => this.handleClick(Number(id))}
-                                        onTouch={e => { this.handleTouch(flowpoint.id) }}
+                                        onClick={ (id) => this.handleClick(id)}
+                                        onTouch={(id) => this.handleClick(id)}
                                         onDragEnd={() => console.log('should save in history')}
                                         onDrag={pos => {
                                             // TODO: not necessary
@@ -197,37 +218,6 @@ export default class App extends Component {
                             })
                         }
                     </Flowspace>
-                    <div class="jxf_actions">
-                        <div>
-                            {/* TODO: manage style through theming and CSS in JS */}
-                            <Fab color="primary" aria-label="add" size="small" onClick={this.clearChanges}>
-                                <Clear />
-                            </Fab>
-                            <Fab color="primary" aria-label="add" size="small" onClick={this.undoChanges} disabled={historyPosition === 0}
-                             style={{background: historyPosition === 0 ? 'rgba(63,81,181,0.5)' : 'rgb(63,81,181)', 
-                             color: historyPosition === 0 ? 'rgba(255,255,255,0.5)' : 'white'}}>
-                                <Undo />
-                            </Fab>
-                            <Fab color="primary" aria-label="add" size="small"
-                                onClick={this.redoChanges} disabled={historyPosition === history.length - 1}
-                                style={{background: historyPosition === history.length - 1 ? 'rgba(63,81,181,0.5)' : 'rgb(63,81,181)', 
-                             color: historyPosition === history.length - 1 ? 'rgba(255,255,255,0.5)' : 'white'}}>
-                                <Redo />
-                            </Fab>
-                            <AddFlowpointButton openDialog={() => this.openDialog()} />
-                        </div>
-                        <div>
-                            <Fab color="primary" aria-label="add" size="small">
-                                <Settings />
-                            </Fab>
-                            <Fab color="default" aria-label="add" size="small">
-                                <Save />
-                            </Fab>
-                            <Fab color="default" aria-label="add" size="small" onClick={() => this.setState({isLocked: !isLocked})}>
-                                { isLocked ? <LockOutlined /> : <LockOpenOutlined /> }
-                            </Fab>
-                        </div>
-                    </div>
                 </div>
 
  
@@ -235,24 +225,53 @@ export default class App extends Component {
                     classes={{paper: this.classes.paper}}
                     variant="persistent"
                     anchor="bottom"
-                    open={drawerOpen}
+                    open={Boolean(drawerView)}
                 >
-                    <div style={{color: 'white', margin: 0, position: 'absolute', width: '100%', top: '-20px'}}>
-                        <span onClick={() => this.setState({drawerOpen: !drawerOpen, selectedBottom: undefined})}>Notes</span>
-                    {drawerOpen && <span> for {selectedBottom ? selectedBottom.name : 'global'}</span>}
-                    </div>
-                    <TextField
-                        id="outlined-textarea"
-                        placeholder="Note"
-                        multiline
-                        fullWidth
-                        disabled={isLocked}
-                        value={selectedBottom ? selectedBottom.comment || '' : globalComment}
-                        variant="outlined"
-                        rows={3}
-                        onChange={(e) => this.updateBottom(e.target.value)}
-                    />
+                    {drawerView === 'note' && <div>
+                        <TextField
+                            id="outlined-textarea"
+                            placeholder="Note"
+                            multiline
+                            fullWidth
+                            disabled={isLocked}
+                            value={selectedBottom ? selectedBottom.comment || '' : globalComment}
+                            variant="outlined"
+                            rows={3}
+                            onChange={(e) => this.updateBottom(e.target.value)}
+                        />
+                    </div>}
+
+                    {drawerView === 'flow' && <div class="flow_actions">
+                        {/* TODO: manage style through theming and CSS in JS */}
+                        <Fab color="primary" aria-label="add" size="small" onClick={this.clearChanges}>
+                            <Clear />
+                        </Fab>
+                        <div>
+                            <Fab color="primary" aria-label="add" size="small" onClick={this.undoChanges} disabled={historyPosition === 0}
+                                style={{
+                                    background: historyPosition === 0 ? 'rgba(63,81,181,0.5)' : 'rgb(63,81,181)',
+                                    color: historyPosition === 0 ? 'rgba(255,255,255,0.5)' : 'white'
+                                }}>
+                                <Undo />
+                            </Fab>
+                            <Fab color="primary" aria-label="add" size="small"
+                                onClick={this.redoChanges} disabled={historyPosition === history.length - 1}
+                                style={{
+                                    background: historyPosition === history.length - 1 ? 'rgba(63,81,181,0.5)' : 'rgb(63,81,181)',
+                                    color: historyPosition === history.length - 1 ? 'rgba(255,255,255,0.5)' : 'white'
+                                }}>
+                                <Redo />
+                            </Fab>
+                        </div>
+                        <AddFlowpointButton openDialog={() => this.openDialog()} />
+                    </div>}
                 </Drawer>
+
+                <BottomNavigation value={drawerView} onChange={(e, value) => this.bottomActionChanged(value)}> 
+                {BOTTOM_NAVS.map(nav => (
+                    <BottomNavigationAction classes={{root: this.classes.root}} disabled={nav.disabled} showLabel={nav.showLabel} value={nav.value} label={nav.label} icon={nav.icon} />
+                ))}
+                </BottomNavigation>
             </div>
         )
     }

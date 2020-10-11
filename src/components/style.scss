@@ -13,16 +13,10 @@
     position: relative;
 }
 
-.jxf_actions {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    padding: 10px;
+.flow_actions {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    > div:first-child {
+    justify-content: space-between;;
+    > div {
         display: flex;
     }
 }

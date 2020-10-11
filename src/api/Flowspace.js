@@ -238,7 +238,6 @@ export default class Flowspace extends Component {
     var style = {
       overflow:'scroll',
       height: '100%',
-      paddingTop: '63px',
       backgroundColor: background_color.p
     };
     if (this.props.style) {

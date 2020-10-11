@@ -151,7 +151,7 @@ export default class Flowpoint extends Component {
 
     // Trigger user-defined onClick?
     if (!this.didDrag) {
-      this.onTouch(e)
+      this.onTouch(this.props.id)
     } else {
       // Updating flowspace
       this.tellFlowspace()
