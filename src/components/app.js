@@ -13,7 +13,7 @@ import { FlowpointControlDialog } from './flowpoint-control-dialog';
 import { DUMMY_FLOWPOINTS } from '../fixtures/flowpoints';
 
 // Material-UI
-import { Redo, Undo, Clear, Settings } from '@material-ui/icons';
+import { Redo, Undo, Clear, Settings, Save } from '@material-ui/icons';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -106,9 +106,7 @@ export default class App extends Component {
         const id = this.state.selected.id;
         const remainingFlowPoints = this.state.flowpoints.filter(flowpoint => flowpoint.id !== id);
         remainingFlowPoints.forEach(flowpoint => {
-            if (flowpoint.outputs && flowpoint.outputs[id.toString()]) {
-                delete flowpoint.outputs[id.toString()]
-            }
+            flowpoint.outputs = flowpoint.outputs.filter(output => output.linkedTo !== id);
         });
         this.setState({flowpoints: remainingFlowPoints}, () => this.updateHistory());
         this.closeDialog();
@@ -220,7 +218,9 @@ export default class App extends Component {
                             <Fab color="primary" aria-label="add" size="small">
                                 <Settings />
                             </Fab>
-                            <Button variant="contained">Save</Button>
+                            <Fab color="default" aria-label="add" size="small">
+                                <Save />
+                            </Fab>
                         </div>
                     </div>
                 </div>

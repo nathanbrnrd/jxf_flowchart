@@ -88,12 +88,12 @@ export function CalcPos(pos, snap, minimum) {
     }
   
     // Testing all positions
-    Object.keys(allPositions).map(Number).map(key => {
-      if (key !== key1 && key !== key2) {
+    allPositions.forEach(position => {
+      if (position.posId !== key1 && position.posId !== key2) {
         if (!docrash) {
   
           // Loop specifics
-          const pt = allPositions[key];
+          const pt = position;
           const x1 = getx(pt.y);
           const x2 = getx(pt.y + pt.height);
           const y1 = gety(pt.x);

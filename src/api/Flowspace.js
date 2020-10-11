@@ -12,7 +12,7 @@ export default class Flowspace extends Component {
   constructor(props) {
 
     super(props);
-    this.state = {};
+    this.state = {positions: []};
 
     // Helper variables
     this.didMount = false; // Used to determine when drawing of connections should start
@@ -25,7 +25,14 @@ export default class Flowspace extends Component {
 
 
   updateFlowspace(key, pos) {
-    this.setState({ [key]:pos });
+    const positions = this.state.positions;
+    const index = positions.findIndex(position => position.posId === key);
+    if (index !== -1) {
+      positions[index] = {posId: key, ...pos };
+    } else {
+      positions.push({posId: key, ...pos });
+    }
+    this.setState({positions});
   }
 
 
@@ -113,25 +120,23 @@ export default class Flowspace extends Component {
     });
 
     // Removing unused positions
-    Object.keys(this.state).map(Number).map(testkey => {
-      if (!newKeys.includes(testkey)) delete this.state[testkey];
-    });
+    // TODO: check if this follows the best practices
+    this.state.positions = this.state.positions.filter(position => newKeys.includes(position.posId));
 
     // Drawing of connections will only start after Flowspace have been mounted once.
     if (this.didMount) {
       // Getting flowspace size
-      Object.keys(this.state).map(key => {
-        const point = this.state[Number(key)]
-        maxX = Math.max(maxX, point.x + 1.5 * point.width)
-        maxY = Math.max(maxY, point.y + 2 * point.height)
+      this.state.positions.forEach(position => {
+        maxX = Math.max(maxX, position.x + 1.5 * position.width)
+        maxY = Math.max(maxY, position.y + 2 * position.height)
       })
 
       // Looping through connections and adding paths and gradients.
       var newCons = [];
       connections.forEach(connection => {
         // Loop specifics
-        const pa = this.state[connection.a]
-        const pb = this.state[connection.b]
+        const pa = this.state.positions.find(pos => pos.posId === connection.a)
+        const pb = this.state.positions.find(pos => pos.posId === connection.b)
         const con_key = connection.a + '_' + connection.b;
 
         const grad_name = 'grad_' + con_key;
@@ -142,7 +147,7 @@ export default class Flowspace extends Component {
         // Continuing only if both pa and pb are defined
         if (pa && pb) {
           // Calculate new positions or get old ones
-          var positions = AutoGetLoc(pa, pb, connection.outputLoc, connection.inputLoc, connection.a, connection.b, this.state, (this.props.avoidCollisions === false ? false : true));
+          var positions = AutoGetLoc(pa, pb, connection.outputLoc, connection.inputLoc, connection.a, connection.b, this.state.positions, (this.props.avoidCollisions === false ? false : true));
 
           // Display arrows - if set then connection-specific overrides flowspace
           var markerStart = this.props.arrowStart;
