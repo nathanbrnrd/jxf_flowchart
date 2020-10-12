@@ -1,10 +1,13 @@
 import { h } from 'preact';
 import { useState } from 'preact/compat';
 
+import { connect } from "redux-zero/preact";
+import actions from '../../redux/actions';
+
 // Dialog content
-import { NameInput } from './dialog-content/name-input';
-import { OutputsSelect } from './dialog-content/outputs-select';
-import { CommentArea } from './dialog-content/comment-area';
+import { NameInput } from './name-input';
+import OutputsSelect from './outputs-select';
+import CommentArea from './comment-area';
 
 // Material-UI
 import Button from '@material-ui/core/Button';
@@ -15,10 +18,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { DeleteForever } from '@material-ui/icons';
 
 // ADD-ON: check if name already exists
-export function FlowpointControlDialog(props) {
-    if (!props.isOpen) { return } // abort if not open
-    const creating = !props.selected
-    const title = creating ? '' : props.selected.name;
+function FlowpointControlDialog({ showCreateBox, selected, deleteFlowpoint, createFlowpoint, updateFlowpoint, closeDialog, updateHistory }) {
+    if (!showCreateBox) { return } // abort if not open
+    const creating = !selected
+    const title = creating ? '' : selected.name;
 
     // Get outputs
     let outputs;
@@ -27,17 +30,23 @@ export function FlowpointControlDialog(props) {
     let comment;
     const updateComment = (commentText) => comment = commentText;
     // Get name... as state for re-rendering
-    const [name, setName] = useState(props.name);
+    const [name, setName] = useState(title);
+
+    const manageFlowpoint = (manageAction) => {
+        manageAction();
+        updateHistory();
+        closeDialog();
+    }
 
     const action = creating ?
-    { label: 'Create', function: () => props.createFlowPoint(name, outputs, comment) } :
-    { label: 'Update', function: () => props.updateFlowPoint(name, outputs, comment) };
+    { label: 'Create', function: () => manageFlowpoint(() => createFlowpoint(name, outputs, comment)) } :
+    { label: 'Update', function: () => manageFlowpoint(() => updateFlowpoint(name, outputs, comment)) };
 
     return (
-        <Dialog open={props.isOpen}>
+        <Dialog open={showCreateBox}>
             <DialogTitle id="form-dialog-title">
                 <span>{title || 'New action'}</span>
-                {!creating && <DeleteForever color={'error'} onClick={props.deleteFlowpoint}/>}
+                {!creating && <DeleteForever color={'error'} onClick={() => manageFlowpoint(() => deleteFlowpoint())}/>}
             </DialogTitle>
             <DialogContent>
                 <NameInput name={title} updateName={setName} />
@@ -47,9 +56,16 @@ export function FlowpointControlDialog(props) {
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button onClick={props.closeDialog} color="primary">Cancel</Button>
+                <Button onClick={closeDialog} color="primary">Cancel</Button>
     <Button color="primary" disabled={!name} onClick={action.function}>{action.label}</Button>
             </DialogActions>
         </Dialog>
     );
 }
+
+const mapToProps = ({ showCreateBox, selected }) => ({ showCreateBox, selected });
+
+export default connect(
+    mapToProps,
+    actions
+  )(FlowpointControlDialog);

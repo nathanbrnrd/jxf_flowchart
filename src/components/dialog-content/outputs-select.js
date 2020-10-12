@@ -1,25 +1,31 @@
 import { h } from 'preact';
-import { useContext, useState, useEffect } from 'preact/compat';
+import { useState, useEffect } from 'preact/compat';
 
-// Component
-import { FlowpointOptions } from '../app';
+import { connect } from "redux-zero/preact";
+import actions from '../../redux/actions';
+
 
 // lodash
 import { orderBy } from 'lodash';
 
 // Material-UI
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import Checkbox from '@material-ui/core/Checkbox';
-import ListItemText from '@material-ui/core/ListItemText';
 import Chip from '@material-ui/core/Chip';
 
-export function OutputsSelect(props) {
+// Context from FlowpointOptions
+function getOutputs (flowpoints, selected) {
+    const availableFlowpoints = selected ?
+     flowpoints.filter(flowpoint => flowpoint.id !== selected.id) :
+     flowpoints;
+     return {
+         available: availableFlowpoints.map(flowpoint => ({id: flowpoint.id, name: flowpoint.name})),
+         selected: selected ? selected.outputs.map(output => output.linkedTo) : []
+        }
+}
 
-    const outputs = useContext(FlowpointOptions);
+
+function OutputsSelect({updateOutputs, selected, flowpoints}) {
+
+    const outputs = getOutputs(flowpoints, selected);
     // Selected output ids controllers
     const [selectedOutputIds, selectOutputIds] = useState(outputs.selected);
     const onOutputIdsChange = (id, alreadySelected) => {
@@ -36,7 +42,7 @@ export function OutputsSelect(props) {
     }, [outputs.selected])
 
     useEffect(() => {
-        props.updateOutputs(selectedOutputIds)
+        updateOutputs(selectedOutputIds)
     }, [selectedOutputIds])
 
     return (
@@ -55,3 +61,10 @@ export function OutputsSelect(props) {
         </div>
     )
 }
+
+const mapToProps = ({ selected, flowpoints }) => ({ selected, flowpoints });
+
+export default connect(
+    mapToProps,
+    actions
+  )(OutputsSelect);

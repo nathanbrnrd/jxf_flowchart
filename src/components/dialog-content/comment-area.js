@@ -1,13 +1,15 @@
 import { h } from 'preact';
-import { useState, useEffect, useContext } from 'preact/compat';
-import { FlowpointComment } from '../app';
+import { useState, useEffect } from 'preact/compat';
+
+import { connect } from "redux-zero/preact";
+import actions from '../../redux/actions';
 
 // Material-UI
 import TextField from '@material-ui/core/TextField';
 
-export function CommentArea(props) {
+function CommentArea({ updateComment, selected }) {
 
-    const selectedComment = useContext(FlowpointComment);
+    const selectedComment = selected ? selected.comment : undefined;
     // Selected output ids controllers
     const [comment, inputComment] = useState(selectedComment);
     const onCommentInput = (e) => inputComment(e.target.value);
@@ -18,7 +20,7 @@ export function CommentArea(props) {
     }, [selectedComment])
 
     useEffect(() => {
-        props.updateComment(comment)
+        updateComment(comment)
     }, [comment])
 
     return (
@@ -35,3 +37,10 @@ export function CommentArea(props) {
         />
     )
 }
+
+const mapToProps = ({ selected }) => ({ selected });
+
+export default connect(
+    mapToProps,
+    actions
+  )(CommentArea);
