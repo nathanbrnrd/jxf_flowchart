@@ -8,34 +8,34 @@ import actions from '../../redux/actions';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
-    paper: {
-      overflowY: 'visible',
-      visibility: 'visible!important',
-      bottom: '56px'
-    },
-  }));
+  paper: {
+    overflowY: 'visible',
+    visibility: 'visible!important',
+    bottom: '56px'
+  },
+}));
 
-function JXFDrawer({drawerView}) {
+function JXFDrawer({ drawerView }) {
 
-    const classes = useStyles();
+  const classes = useStyles();
 
-    return (
-        <Drawer
-            classes={{ paper: classes.paper }}
-            variant="persistent"
-            anchor="bottom"
-            open={Boolean(drawerView)}
-        >
-            {drawerView === 'note' && <Note />}
+  return (
+    <Drawer
+      classes={{ paper: classes.paper }}
+      variant="persistent"
+      anchor="bottom"
+      open={Boolean(drawerView)}
+    >
+      {drawerView === 'note' && <Note />}
 
-            {drawerView === 'flow' && <FlowControls />}
-        </Drawer>
-    );
+      {drawerView === 'flow' && <FlowControls />}
+    </Drawer>
+  );
 }
 
 const mapToProps = ({ drawerView }) => ({ drawerView });
 
 export default connect(
-    mapToProps,
-    actions
-  )(JXFDrawer);
+  mapToProps,
+  actions
+)(JXFDrawer);

@@ -7,13 +7,13 @@ const OUTPUT_VALUE = {
     "arrowEnd": true
 };
 
-export function create (state, name, outputs = [], comment) {
+export function create(state, name, outputs = [], comment) {
     const newId = Math.max(...state.flowpoints.map(flowpoint => flowpoint.id)) + 1;
     const newFlowpoint = {
         id: newId,
         name: name,
         comment,
-        outputs: outputs.map(output => ({linkedTo: output, ...OUTPUT_VALUE})),
+        outputs: outputs.map(output => ({ linkedTo: output, ...OUTPUT_VALUE })),
         pos: {
             "x": 15,
             "y": 0
@@ -23,14 +23,14 @@ export function create (state, name, outputs = [], comment) {
     return flowpoints;
 }
 
-export function update (state, name, outputs, comment) {
+export function update(state, name, outputs, comment) {
     const flowpoints = cloneDeep(state.flowpoints);
     const selectedId = state.selected.id;
     const selectedFlowpoint = flowpoints.find(flowpoint => flowpoint.id === selectedId);
     selectedFlowpoint.name = name;
     selectedFlowpoint.comment = comment;
     if (outputs) { // outputs undefined if not changed
-        selectedFlowpoint.outputs = outputs.map(output => ({linkedTo: output, ...OUTPUT_VALUE}));
+        selectedFlowpoint.outputs = outputs.map(output => ({ linkedTo: output, ...OUTPUT_VALUE }));
     }
     return flowpoints;
 }

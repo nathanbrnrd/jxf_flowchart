@@ -8,15 +8,15 @@ function Note({ isLocked, selectedBottom, globalComment }) {
     const updateBottom = (value) => {
         if (this.state.selectedBottom) {
             const id = this.state.selectedBottom.id;
-            const selectedBottom = {...this.state.selectedBottom, comment: value};
+            const selectedBottom = { ...this.state.selectedBottom, comment: value };
             const flowpointIndex = this.state.flowpoints.findIndex(flowpoint => flowpoint.id === id);
             const flowpoints = this.state.flowpoints;
             flowpoints[flowpointIndex] = selectedBottom;
-            this.setState({ selectedBottom, flowpoints});
+            this.setState({ selectedBottom, flowpoints });
         } else {
             this.setState({ globalComment: value });
         }
-    } 
+    }
 
     return (
         <TextField
@@ -38,4 +38,4 @@ const mapToProps = ({ isLocked, selectedBottom, globalComment }) => ({ isLocked,
 export default connect(
     mapToProps,
     actions
-  )(Note);
+)(Note);

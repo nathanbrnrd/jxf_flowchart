@@ -32,18 +32,12 @@ export default class App extends Component {
         }
     }
 
-    render(_ , {showCreateBox, flowpoints, selected, isLocked}) {
+    render() {
         return (
             <Provider store={store}>
                 <div class="jxf_container">
                     <FlowpointControlDialog />
 
-                    {/* isOpen={showCreateBox}
-                        selected={selected}
-                        createFlowPoint={this.createFlowPoint}
-                        updateFlowPoint={this.updateFlowPoint}
-                        deleteFlowpoint={this.deleteFlowpoint}
-                        closeDialog={this.closeDialog} */}
                     <div class="jxf_top">
                         <FlowDiagram />
                     </div>

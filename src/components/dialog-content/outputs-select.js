@@ -12,18 +12,18 @@ import { orderBy } from 'lodash';
 import Chip from '@material-ui/core/Chip';
 
 // Context from FlowpointOptions
-function getOutputs (flowpoints, selected) {
+function getOutputs(flowpoints, selected) {
     const availableFlowpoints = selected ?
-     flowpoints.filter(flowpoint => flowpoint.id !== selected.id) :
-     flowpoints;
-     return {
-         available: availableFlowpoints.map(flowpoint => ({id: flowpoint.id, name: flowpoint.name})),
-         selected: selected ? selected.outputs.map(output => output.linkedTo) : []
-        }
+        flowpoints.filter(flowpoint => flowpoint.id !== selected.id) :
+        flowpoints;
+    return {
+        available: availableFlowpoints.map(flowpoint => ({ id: flowpoint.id, name: flowpoint.name })),
+        selected: selected ? selected.outputs.map(output => output.linkedTo) : []
+    }
 }
 
 
-function OutputsSelect({updateOutputs, selected, flowpoints}) {
+function OutputsSelect({ updateOutputs, selected, flowpoints }) {
 
     const outputs = getOutputs(flowpoints, selected);
     // Selected output ids controllers
@@ -51,13 +51,13 @@ function OutputsSelect({updateOutputs, selected, flowpoints}) {
             {options.map(option => {
                 const isSelected = isOptionChecked(option.id);
                 return (
-                <Chip label={option.name}
-                    key={option.id}
-                    size="small"
-                    color={isSelected ? 'primary' : 'default'}
-                    onClick={() => onOutputIdsChange(option.id, isSelected)} />
-            );
-                })}
+                    <Chip label={option.name}
+                        key={option.id}
+                        size="small"
+                        color={isSelected ? 'primary' : 'default'}
+                        onClick={() => onOutputIdsChange(option.id, isSelected)} />
+                );
+            })}
         </div>
     )
 }
@@ -67,4 +67,4 @@ const mapToProps = ({ selected, flowpoints }) => ({ selected, flowpoints });
 export default connect(
     mapToProps,
     actions
-  )(OutputsSelect);
+)(OutputsSelect);

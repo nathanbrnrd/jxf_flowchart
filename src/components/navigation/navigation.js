@@ -9,21 +9,21 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 
 const BOTTOM_NAVS = [
-    { value: 'settings', label: 'Page', icon: <Settings />},
-    { value: 'flow', label: 'Flow', icon: <Build />},
-    { value: 'note', label: 'Notes', icon: <Comment />},
-    { value: 'video', label: 'Videos', icon: <PlayCircleFilled />},
-    { value: 'save', label: 'Save', showLabel: true, icon: <Save />},
-    { value: 'lock', label: 'Lock', showLabel: true, icon: <LockOutlined />} // TODO: retrieve state to build this one
+    { value: 'settings', label: 'Page', icon: <Settings /> },
+    { value: 'flow', label: 'Flow', icon: <Build /> },
+    { value: 'note', label: 'Notes', icon: <Comment /> },
+    { value: 'video', label: 'Videos', icon: <PlayCircleFilled /> },
+    { value: 'save', label: 'Save', showLabel: true, icon: <Save /> },
+    { value: 'lock', label: 'Lock', showLabel: true, icon: <LockOutlined /> } // TODO: retrieve state to build this one
 ];
 
 const useStyles = makeStyles((theme) => ({
     root: {
         minWidth: '45px'
     }
-  }));
+}));
 
-function Navigation({drawerView, navigate}) {
+function Navigation({ drawerView, navigate }) {
     const classes = useStyles();
 
     const bottomActionChanged = (view, value) => {

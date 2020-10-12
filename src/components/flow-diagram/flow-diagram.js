@@ -65,4 +65,4 @@ const mapToProps = ({ flowpoints, isLocked, selectedBottom }) => ({ flowpoints, 
 export default connect(
     mapToProps,
     actions
-  )(FlowDiagram);
+)(FlowDiagram);

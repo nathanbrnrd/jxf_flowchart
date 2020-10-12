@@ -1,5 +1,5 @@
 .dialog {
-    background-color: transparent!important;
+    background-color: transparent !important;
 }
 
 .jxf_container {
@@ -15,8 +15,10 @@
 
 .flow_actions {
     display: flex;
-    justify-content: space-between;;
-    > div {
+    justify-content: space-between;
+    ;
+
+    >div {
         display: flex;
     }
 }

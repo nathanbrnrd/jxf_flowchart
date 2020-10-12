@@ -25,15 +25,15 @@ function CommentArea({ updateComment, selected }) {
 
     return (
         <TextField
-          id="outlined-textarea"
-          placeholder="Comment"
-          multiline
-          fullWidth
-          value={comment}
-          variant="outlined"
-          rows={3}
-          rowsMax={6} 
-          onInput={() => onCommentInput(event)}
+            id="outlined-textarea"
+            placeholder="Comment"
+            multiline
+            fullWidth
+            value={comment}
+            variant="outlined"
+            rows={3}
+            rowsMax={6}
+            onInput={() => onCommentInput(event)}
         />
     )
 }
@@ -43,4 +43,4 @@ const mapToProps = ({ selected }) => ({ selected });
 export default connect(
     mapToProps,
     actions
-  )(CommentArea);
+)(CommentArea);

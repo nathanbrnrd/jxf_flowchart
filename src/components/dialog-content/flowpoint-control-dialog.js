@@ -39,25 +39,25 @@ function FlowpointControlDialog({ showCreateBox, selected, deleteFlowpoint, crea
     }
 
     const action = creating ?
-    { label: 'Create', function: () => manageFlowpoint(() => createFlowpoint(name, outputs, comment)) } :
-    { label: 'Update', function: () => manageFlowpoint(() => updateFlowpoint(name, outputs, comment)) };
+        { label: 'Create', function: () => manageFlowpoint(() => createFlowpoint(name, outputs, comment)) } :
+        { label: 'Update', function: () => manageFlowpoint(() => updateFlowpoint(name, outputs, comment)) };
 
     return (
         <Dialog open={showCreateBox}>
             <DialogTitle id="form-dialog-title">
                 <span>{title || 'New action'}</span>
-                {!creating && <DeleteForever color={'error'} onClick={() => manageFlowpoint(() => deleteFlowpoint())}/>}
+                {!creating && <DeleteForever color={'error'} onClick={() => manageFlowpoint(() => deleteFlowpoint())} />}
             </DialogTitle>
             <DialogContent>
                 <NameInput name={title} updateName={setName} />
                 <OutputsSelect updateOutputs={updateOutputs} />
                 <div>
-                    <CommentArea updateComment={updateComment}/>
+                    <CommentArea updateComment={updateComment} />
                 </div>
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDialog} color="primary">Cancel</Button>
-    <Button color="primary" disabled={!name} onClick={action.function}>{action.label}</Button>
+                <Button color="primary" disabled={!name} onClick={action.function}>{action.label}</Button>
             </DialogActions>
         </Dialog>
     );
@@ -68,4 +68,4 @@ const mapToProps = ({ showCreateBox, selected }) => ({ showCreateBox, selected }
 export default connect(
     mapToProps,
     actions
-  )(FlowpointControlDialog);
+)(FlowpointControlDialog);

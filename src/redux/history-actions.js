@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 
 // TODO: try to add all state in history
-export function update(state) { 
+export function update(state) {
     const newHistory = state.history.filter((_, i) => i <= state.historyPosition);
     return [...newHistory, cloneDeep(state.flowpoints)];
 }
