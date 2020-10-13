@@ -16,7 +16,10 @@ const actions = store => ({
     updateHistory: (state) => ({ history: History.update(state), historyPosition: state.historyPosition + 1 }),
     moveHistory: (state, type) => {
         const newPosition = History.movePosition(state, type);
-        return { historyPosition: newPosition, flowpoints: cloneDeep(state.history[newPosition]) }
+        const selected = state.selected ? 
+        state.history[newPosition].find(f => f.id === state.selected.id) :
+        undefined;
+        return { historyPosition: newPosition, flowpoints: cloneDeep(state.history[newPosition]), selected }
     },
     clearHistory: (state) => ({ historyPosition: 0, flowpoints: cloneDeep(state.history[0]), history: [cloneDeep(DUMMY_FLOWPOINTS)] }),
     // Navigation
