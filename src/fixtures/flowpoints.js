@@ -44,3 +44,10 @@ export const DUMMY_FLOWPOINTS = [
         outputs: []
     }
 ];
+
+export const DUMMY_PAGE = {
+    name: 'Jiu Jitsu counter-attack',
+    videos: [],
+    notes: 'Bon ok admettons vous avez pris une année sabbatique très bien mais l’année prochaine, vous avez pensé à ça ? L’année prochaine ? C’est pas le monde qui va se plier à vos désirs mes enfants ! C’est pas 68, année de la jeunesse, c’est pas comme ça que ça se passe. C’est le vrai monde dehors et le vrai monde il va chez le coiffeur. Alors gnagna, les guitares, les troubadours tout ça c’est fini !',
+    tags: []
+};

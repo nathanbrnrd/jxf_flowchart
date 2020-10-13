@@ -26,11 +26,10 @@ function FlowpointControlDialog({ showCreateBox, selected, deleteFlowpoint, crea
     // Get outputs
     let outputs;
     const updateOutputs = (ids) => outputs = ids;
-    // Get comment
-    let comment;
-    const updateComment = (commentText) => comment = commentText;
     // Get name... as state for re-rendering
     const [name, setName] = useState(title);
+    // Get comment
+    const [comment, updateComment] = useState(selected ? selected.comment : '');
 
     const manageFlowpoint = (manageAction) => {
         manageAction();

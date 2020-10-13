@@ -239,7 +239,6 @@ export default class Flowpoint extends Component {
 
 
   onMouseUp(e) {
-
     // Trigger user-defined onClick?
     if (!this.didDrag) this.onClick(this.props.id)
 

@@ -10,12 +10,16 @@ import Flowpoint from '../../api/Flowpoint.js';
 // Third party
 import { MapInteractionCSS } from 'react-map-interaction';
 
-function FlowDiagram({ flowpoints, isLocked, selectedBottom, selectBottom }) {
+import store from '../../redux/store'
 
-    const handleClick = (id) => selectBottom(flowpoints.find(flowpoint => flowpoint.id === id));
+// TODO: find better way. state in functional component is old state in callback function
+function handleClick(flowpoint) {
+    const flowpoints = store.getState().flowpoints;
+    const selected = flowpoints.find(f => f.id === flowpoint.id);
+    store.setState({selected})
+}
 
-    const handleTouch = () => console.log('handle_touch: same as handleClick');
-
+function FlowDiagram({ flowpoints, isLocked, selected, selectFlowpoint }) {
     return (
         <MapInteractionCSS defaultScale={2}
             defaultTranslation={{ x: 100, y: 100 }}
@@ -27,8 +31,10 @@ function FlowDiagram({ flowpoints, isLocked, selectedBottom, selectBottom }) {
                 background="black"
                 avoidCollisions
                 connectionSize={2}
-                onClick={() => selectBottom()}>
+                onClick={() => selectFlowpoint()}>
+                    
                 {
+                    // TODO: problem with click callback
                     flowpoints.map(flowpoint => {
                         return (
                             <Flowpoint
@@ -38,9 +44,9 @@ function FlowDiagram({ flowpoints, isLocked, selectedBottom, selectBottom }) {
                                 startPosition={flowpoint.pos}
                                 outputs={flowpoint.outputs}
                                 isLocked={isLocked}
-                                selected={selectedBottom && selectedBottom.id === flowpoint.id}
-                                onClick={(id) => handleClick(id)}
-                                onTouch={(id) => handleClick(id)}
+                                selected={selected && selected.id === flowpoint.id}
+                                onClick={() => handleClick(flowpoint)} // TODO: make Flowpoint return e
+                                onTouch={() => selectFlowpoint(flowpoint)}
                                 onDragEnd={() => console.log('should save in history')}
                                 onDrag={pos => {
                                     // TODO: not necessary
@@ -50,7 +56,6 @@ function FlowDiagram({ flowpoints, isLocked, selectedBottom, selectBottom }) {
                                 }}>
                                 <FlowpointContent flowpoint={flowpoint} />
                             </Flowpoint>
-
                         )
 
                     })
@@ -60,7 +65,7 @@ function FlowDiagram({ flowpoints, isLocked, selectedBottom, selectBottom }) {
     );
 }
 
-const mapToProps = ({ flowpoints, isLocked, selectedBottom }) => ({ flowpoints, isLocked, selectedBottom });
+const mapToProps = ({ flowpoints, isLocked, selected }) => ({ flowpoints, isLocked, selected });
 
 export default connect(
     mapToProps,

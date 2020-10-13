@@ -8,7 +8,6 @@ import actions from '../../redux/actions';
 import TextField from '@material-ui/core/TextField';
 
 function CommentArea({ updateComment, selected }) {
-
     const selectedComment = selected ? selected.comment : undefined;
     // Selected output ids controllers
     const [comment, inputComment] = useState(selectedComment);

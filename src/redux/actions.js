@@ -8,6 +8,7 @@ const actions = store => ({
     openDialog: (state, selected) => ({ showCreateBox: true, selected }),
     closeDialog: () => ({ showCreateBox: false, selected: undefined }),
     // Flowpoint
+    selectFlowpoint: (state, selected) => ({selected}),
     createFlowpoint: (state, name, outputs, comment) => ({ flowpoints: Flowpoint.create(state, name, outputs, comment) }),
     updateFlowpoint: (state, name, outputs, comment) => ({ flowpoints: Flowpoint.update(state, name, outputs, comment) }),
     deleteFlowpoint: (state) => ({ flowpoints: Flowpoint.remove(state) }),
@@ -20,8 +21,8 @@ const actions = store => ({
     clearHistory: (state) => ({ historyPosition: 0, flowpoints: cloneDeep(state.history[0]), history: [cloneDeep(DUMMY_FLOWPOINTS)] }),
     // Navigation
     navigate: (state, view) => ({ drawerView: view }),
-    // Bottom
-    selectBottom: (state, selectedBottom) => ({ selectedBottom })
+    // Page
+    updatePageOptions: (state, name, notes) => ({pageOptions: {...state.pageOptions, name, notes}})
 });
 
 export default actions;

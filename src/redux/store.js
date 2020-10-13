@@ -3,7 +3,7 @@ import { applyMiddleware } from "redux-zero/middleware";
 import { connect } from "redux-zero/devtools";
 
 import { cloneDeep } from 'lodash';
-import { DUMMY_FLOWPOINTS } from '../fixtures/flowpoints';
+import { DUMMY_FLOWPOINTS, DUMMY_PAGE } from '../fixtures/flowpoints';
 
 const initialState = {
     showCreateBox: false,
@@ -12,9 +12,9 @@ const initialState = {
     globalComment: 'This is  comment',
     history: [cloneDeep(DUMMY_FLOWPOINTS)],
     historyPosition: 0,
-    selectedBottom: undefined,
     isLocked: false,
-    drawerView: undefined
+    drawerView: undefined,
+    pageOptions: cloneDeep(DUMMY_PAGE)
 };
 
 const middlewares = connect ? applyMiddleware(connect(initialState)) : [];
