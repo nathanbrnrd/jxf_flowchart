@@ -11,7 +11,7 @@ function FlowpointContent({ flowpoint, isLocked, openDialog }) {
         <div style={{ display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', paddingLeft: 2, paddingRight: 2 }}>
             {flowpoint.name || 'No name should not happen'}
         </div>
-        {!isLocked && <MoreHoriz onClick={() => openDialog(flowpoint)} style={{ position: 'absolute', top: 0, right: 0 }} />}
+        {!isLocked && <MoreHoriz onClick={() => openDialog(flowpoint)} onTouchEnd={() => openDialog(flowpoint)} style={{ position: 'absolute', top: 0, right: 0 }} />}
     </div>;
 }
 

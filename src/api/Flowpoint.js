@@ -148,7 +148,6 @@ export default class Flowpoint extends Component {
 
 
   onTouchEnd(e) {
-
     // Trigger user-defined onClick?
     if (!this.didDrag) {
       this.onTouch(this.props.id)
@@ -345,6 +344,7 @@ export default class Flowpoint extends Component {
         onMouseOut    = {this.onMouseOut}
         onMouseDown   = {(e) => {this.onMouseDown(e)}}
         onTouchStart  = {(e) => {this.onTouchStart(e)}}
+        onTouchEnd    = {(e) => this.onTouchEnd(e)}
         onClick       = {(e) => {this.onMouseUp(e)}}>
         {
           this.props.children

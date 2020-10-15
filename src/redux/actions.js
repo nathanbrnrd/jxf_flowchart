@@ -25,7 +25,9 @@ const actions = store => ({
     // Navigation
     navigate: (state, view) => ({ drawerView: view }),
     // Page
-    updatePageOptions: (state, name, notes) => ({pageOptions: {...state.pageOptions, name, notes}})
+    updatePageOptions: (state, name, notes) => ({pageOptions: {...state.pageOptions, name, notes}}),
+    // Lock
+    switchLock: (state) => ({isLocked: !state.isLocked})
 });
 
 export default actions;

@@ -45,8 +45,8 @@ function FlowDiagram({ flowpoints, isLocked, selected, selectFlowpoint }) {
                                 outputs={flowpoint.outputs}
                                 isLocked={isLocked}
                                 selected={selected && selected.id === flowpoint.id}
-                                onClick={() => handleClick(flowpoint)} // TODO: make Flowpoint return e
-                                onTouch={() => selectFlowpoint(flowpoint)}
+                                onClick={() => handleClick(flowpoint)}
+                                onTouch={() => handleClick(flowpoint)}
                                 onDragEnd={() => console.log('should save in history')}
                                 onDrag={pos => {
                                     // TODO: not necessary
