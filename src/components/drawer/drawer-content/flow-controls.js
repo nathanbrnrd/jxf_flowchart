@@ -14,19 +14,10 @@ function FlowControls({ historyPosition, history, moveHistory, openDialog }) {
                 <Clear />
             </Fab>
             <div>
-                <Fab color="primary" aria-label="add" size="small" onClick={() => moveHistory('decrement')} disabled={historyPosition === 0}
-                    style={{
-                        background: historyPosition === 0 ? 'rgba(63,81,181,0.5)' : 'rgb(63,81,181)',
-                        color: historyPosition === 0 ? 'rgba(255,255,255,0.5)' : 'white'
-                    }}>
+                <Fab color="primary" aria-label="add" size="small" onClick={() => moveHistory('decrement')} disabled={historyPosition === 0}>
                     <Undo />
                 </Fab>
-                <Fab color="primary" aria-label="add" size="small"
-                    onClick={() => moveHistory('increment')} disabled={historyPosition === history.length - 1}
-                    style={{
-                        background: historyPosition === history.length - 1 ? 'rgba(63,81,181,0.5)' : 'rgb(63,81,181)',
-                        color: historyPosition === history.length - 1 ? 'rgba(255,255,255,0.5)' : 'white'
-                    }}>
+                <Fab color="primary" aria-label="add" size="small" onClick={() => moveHistory('increment')} disabled={historyPosition === history.length - 1}>
                     <Redo />
                 </Fab>
             </div>

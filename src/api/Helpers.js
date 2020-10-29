@@ -7,6 +7,8 @@ export function CalcPos(pos, snap, minimum) {
   // Colors
   export function getColor(color) {
   
+    // JXF main color: #0074e1 and #0E0E0E
+
     if (color) {
       switch (color) {
         case 'red':         return { p:'#d50000', s:'#950000', a:'#AE00D5', t:'light', o:'#00c853' };

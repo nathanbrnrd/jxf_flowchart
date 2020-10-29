@@ -334,6 +334,8 @@ export default class Flowpoint extends Component {
       Object.keys(this.props.style).map(key => style[key] = this.props.style[key])
     }
 
+    // TODO: add specific color for each flowpoints here
+
     // Returning finished Flowpoint
     return (
       <div
