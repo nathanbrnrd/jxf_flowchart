@@ -113,6 +113,7 @@ export default function App() {
             <FlowpointControlDialog />
 
             <div class="jxf_top">
+              <h1 class="pageTitle">Jiu-Jitsu XF demo</h1>
               <FlowDiagram />
             </div>
 
