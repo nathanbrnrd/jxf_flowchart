@@ -8,7 +8,7 @@ import { Settings, Save, LockOutlined, Comment, Build, PlayCircleFilled, LockOpe
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         minWidth: '45px'
     }
@@ -27,13 +27,13 @@ function Navigation({ drawerView, isLocked, navigate, switchLock }) {
     ];
 
     const bottomActionChanged = (view, value) => {
-        const noActionValue = ['lock', 'save', view];
+        const noActionValue = ['lock', 'save', 'settings', view];
         const drawerView = !noActionValue.includes(value) ? value : undefined;
         navigate(drawerView);
     }
 
     return (
-        <BottomNavigation value={drawerView} onChange={(e, value) => bottomActionChanged(drawerView, value)}>
+        <BottomNavigation value={drawerView} onChange={(_, value) => bottomActionChanged(drawerView, value)}>
             {BOTTOM_NAVS.map(nav => (
                 <BottomNavigationAction onClick={nav.clickEvent} classes={{ root: classes.root }} disabled={nav.disabled} showLabel={nav.showLabel} value={nav.value} label={nav.label} icon={nav.icon} />
             ))}

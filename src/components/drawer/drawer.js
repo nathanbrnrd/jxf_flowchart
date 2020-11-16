@@ -7,7 +7,7 @@ import actions from '../../redux/actions';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   paper: {
     overflowY: 'visible',
     visibility: 'visible!important',
