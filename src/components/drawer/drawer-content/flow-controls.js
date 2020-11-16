@@ -1,5 +1,5 @@
 import { h } from 'preact';
-
+import './flow-controls.scss';
 import { connect } from "redux-zero/preact";
 import actions from '../../../redux/actions';
 
@@ -7,10 +7,10 @@ import Fab from '@material-ui/core/Fab';
 import { Redo, Undo, Clear } from '@material-ui/icons';
 import { AddFlowpointButton } from '../../create-button';
 
-function FlowControls({ historyPosition, history, moveHistory, openDialog }) {
+function FlowControls({ historyPosition, history, moveHistory, openDialog, clearHistory }) {
     return (
         <div class="flow_actions">
-            <Fab color="primary" aria-label="add" size="small" onClick={this.clearChanges}>
+            <Fab color="primary" aria-label="add" size="small" onClick={clearHistory} disabled={history.length === 1}>
                 <Clear />
             </Fab>
             <div>
