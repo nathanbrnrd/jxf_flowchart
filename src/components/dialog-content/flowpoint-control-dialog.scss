@@ -1,0 +1,16 @@
+.dialogTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+}
+
+.dialogActions {
+    justify-content: space-between!important;
+}
+
+.dialogDelete {
+    &:hover {
+        cursor: pointer;
+    }
+}

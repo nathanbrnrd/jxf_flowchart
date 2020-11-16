@@ -11,7 +11,8 @@ const useStyles = makeStyles(() => ({
   paper: {
     overflowY: 'visible',
     visibility: 'visible!important',
-    bottom: '56px'
+    bottom: '56px',
+    borderTop: 'none'
   },
 }));
 

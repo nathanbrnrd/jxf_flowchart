@@ -1,5 +1,6 @@
 import { h } from 'preact';
 import { useState } from 'preact/compat';
+import './flowpoint-control-dialog.scss';
 
 import { connect } from "redux-zero/preact";
 import actions from '../../redux/actions';
@@ -43,10 +44,10 @@ function FlowpointControlDialog({ showCreateBox, selected, deleteFlowpoint, crea
 
     return (
         <Dialog open={showCreateBox}>
-            <DialogTitle id="form-dialog-title">
-                <span>{title || 'New action'}</span>
-                {!creating && <DeleteForever color={'error'} onClick={() => manageFlowpoint(() => deleteFlowpoint())} />}
-            </DialogTitle>
+            <div class="dialogTitle">
+                <h2>{title || 'New action'}</h2>
+                {!creating && <DeleteForever className="dialogDelete" color={'error'} onClick={() => manageFlowpoint(() => deleteFlowpoint())} />}
+            </div>
             <DialogContent>
                 <NameInput name={title} updateName={setName} />
                 <OutputsSelect updateOutputs={updateOutputs} />
@@ -54,7 +55,7 @@ function FlowpointControlDialog({ showCreateBox, selected, deleteFlowpoint, crea
                     <CommentArea updateComment={updateComment} />
                 </div>
             </DialogContent>
-            <DialogActions>
+            <DialogActions className="dialogActions">
                 <Button onClick={closeDialog} color="primary">Cancel</Button>
                 <Button color="primary" disabled={!name} onClick={action.function}>{action.label}</Button>
             </DialogActions>

@@ -1,4 +1,7 @@
 import { h } from 'preact';
+import './note.scss'
+
+// Material-UI
 import TextField from '@material-ui/core/TextField';
 
 import { connect } from "redux-zero/preact";
@@ -19,13 +22,11 @@ function Note({ isLocked, selected, pageOptions, updateFlowpoint, selectFlowpoin
 
     return (
         <TextField
-            id="outlined-textarea"
+            className="drawerNote"
             placeholder="Note"
             multiline
-            fullWidth
             disabled={isLocked}
             value={selected ? selected.comment || '' : pageNote}
-            variant="outlined"
             rows={3}
             onChange={(e) => updateNote(e.target.value)}
         />

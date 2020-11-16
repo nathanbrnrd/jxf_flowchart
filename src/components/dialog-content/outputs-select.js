@@ -1,5 +1,6 @@
 import { h } from 'preact';
 import { useState, useEffect } from 'preact/compat';
+import './outputs-select.scss';
 
 import { connect } from "redux-zero/preact";
 import actions from '../../redux/actions';
@@ -47,17 +48,20 @@ function OutputsSelect({ updateOutputs, selected, flowpoints }) {
 
     return (
         <div>
-            <p>Link to</p>
-            {options.map(option => {
-                const isSelected = isOptionChecked(option.id);
-                return (
-                    <Chip label={option.name}
-                        key={option.id}
-                        size="small"
-                        color={isSelected ? 'primary' : 'default'}
-                        onClick={() => onOutputIdsChange(option.id, isSelected)} />
-                );
-            })}
+            <p class="title">Links to:</p>
+            <div class="chipList">
+                {options.map(option => {
+                    const isSelected = isOptionChecked(option.id);
+                    return (
+                        <Chip label={option.name}
+                            className="outputChip"
+                            key={option.id}
+                            size="small"
+                            color={isSelected ? 'primary' : 'default'}
+                            onClick={() => onOutputIdsChange(option.id, isSelected)} />
+                    );
+                })}
+            </div>
         </div>
     )
 }

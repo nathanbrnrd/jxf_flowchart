@@ -106,20 +106,20 @@ const theme = createMuiTheme({
 
 export default function App() {
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Provider store={store}>
-            <div class="jxf_container">
-                <FlowpointControlDialog />
+          <div class="jxf_container">
+            <FlowpointControlDialog />
 
-                <div class="jxf_top">
-                    <FlowDiagram />
-                </div>
-
-                <JXFDrawer />
-                <Navigation />
+            <div class="jxf_top">
+              <FlowDiagram />
             </div>
+
+            <JXFDrawer />
+            <Navigation />
+          </div>
         </Provider>
-        </ThemeProvider>
+      </ThemeProvider>
     )
 }
